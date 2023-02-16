@@ -1,5 +1,6 @@
 import sys
 import serial
+import time
 from serial.tools import list_ports
 
 from PyQt5.QtWidgets import QApplication, QMainWindow
@@ -30,6 +31,8 @@ class Window(QMainWindow, Ui_MainWindow):
         self.MCU = serial.Serial(
             port = self.comboBox.currentText(), baudrate=115200, timeout=0.1
         )
+        time.sleep(1)
+        self.enable_remote()
 
     def change_delays(self):
         D1 = self.doubleSpinBox_1.value()
@@ -38,7 +41,7 @@ class Window(QMainWindow, Ui_MainWindow):
         D4 = self.doubleSpinBox_4.value()
         string = f'{int(D1*1000)},{int(D2*1000)},{int(D3*1000)},{int(D4*1000)}\n'
         encoded = str.encode(string)
-        self.mcu.write(encoded)
+        self.MCU.write(encoded)
     
     def enable_remote(self):
         if self.pushButton.isChecked() == True:

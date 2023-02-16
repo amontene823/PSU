@@ -1,19 +1,22 @@
-#define ONBOARD_LED  2
-bool start = false
-
+#define ONBOARD_LED 2
+bool start = false;
+const int startPin = 5;
+const int stopPin = 3;
+const int enablePin = 4;
 String sD1 = "init";
 String sD2 = "init";
 String sD3 = "init";
 String sD4 = "init";
-int D1 = 50;
-int D2 = 1000;
-int D3 = 50;
-int D4 = 1000;
-
-String incomingMsg = "init";
+long D1 = 50000;
+long D2 = 1000000;
+long D3 = 50000;
+long D4 = 1000000;
 
 void setup() {
   pinMode(ONBOARD_LED,OUTPUT);
+  pinMode(startPin, OUTPUT);
+  pinMode(stopPin, OUTPUT);
+  pinMode(enablePin, OUTPUT);
   Serial.begin(115200);
 }
 
@@ -24,30 +27,34 @@ void loop() {
     sD3 = Serial.readStringUntil(',');
     sD4 = Serial.readStringUntil('\n');
     if (sD1 == "Start") {
-      start = true
-      digitalWrite(ONBOARD_LED, HIGH);
+      start = true;
     }
     else if (sD1 == "Stop") {
-      start = false
-      digitalWrite(ONBOARD_LED, LOW);
+      start = false;
     }
     else if (sD1 == "Enable") {
       digitalWrite(ONBOARD_LED, HIGH);
+      digitalWrite(enablePin, HIGH);
+    }
+    else if (sD1 == "Disable") {
+      digitalWrite(ONBOARD_LED, LOW);
+      digitalWrite(enablePin, LOW);
     }
     else {
       D1 = sD1.toInt();
       D2 = sD2.toInt();
       D3 = sD3.toInt();
       D4 = sD4.toInt();
-
-      //Serial.println(D1);
-      //Serial.println(D2);
-      //Serial.println(D3);
-      //Serial.println(D4);
     }
   }
   if (start == true) {
-    digitalWrite(startPin, OUTPUT);
-    
+    digitalWrite(startPin, HIGH);
+    delayMicroseconds(D1);
+    digitalWrite(startPin, LOW);
+    delayMicroseconds(D2);
+    digitalWrite(stopPin, HIGH);
+    delayMicroseconds(D3);
+    digitalWrite(stopPin, LOW);
+    delayMicroseconds(D4);
   }
 }
